@@ -1,0 +1,41 @@
+{
+  "packages": [
+    "npm:pi-powerline-footer",
+    "git:github.com/nicobailon/pi-mcp-adapter",
+    {
+      "source": "git:github.com/HazAT/pi-smart-sessions",
+      "extensions": [
+        "-extensions/smart-sessions.ts"
+      ]
+    },
+    {
+      "source": "git:github.com/HazAT/pi-parallel",
+      "extensions": [
+        "-extension/index.ts"
+      ]
+    },
+    "git:github.com/HazAT/glimpse",
+    "git:github.com/nicobailon/pi-subagents",
+    "npm:pi-notify",
+    "npm:pi-markdown-preview",
+    "npm:pi-interview",
+    "npm:pi-subdir-context",
+    "npm:pi-context",
+    "https://github.com/nicobailon/visual-explainer",
+    "npm:pi-nvidia-nim",
+    "npm:pi-design-deck",
+    "git:github.com/pasky/chrome-cdp-skill@v1.0.1",
+    "git:github.com/kaofelix/pi-fzf",
+    "https://github.com/davebcn87/pi-autoresearch",
+    "npm:pi-parallel-web-search"
+  ],
+  "extensions": [
+    "+extensions/ghostty.ts"
+  ],
+  "lastChangelogVersion": "0.58.3",
+  "theme": "catppuccin-mocha",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.4",
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": false
+}
