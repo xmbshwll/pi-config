@@ -4,15 +4,11 @@
     "git:github.com/nicobailon/pi-mcp-adapter",
     {
       "source": "git:github.com/HazAT/pi-smart-sessions",
-      "extensions": [
-        "-extensions/smart-sessions.ts"
-      ]
+      "extensions": ["-extensions/smart-sessions.ts"]
     },
     {
       "source": "git:github.com/HazAT/pi-parallel",
-      "extensions": [
-        "-extension/index.ts"
-      ]
+      "extensions": ["-extension/index.ts"]
     },
     "git:github.com/HazAT/glimpse",
     "git:github.com/nicobailon/pi-subagents",
@@ -27,11 +23,10 @@
     "git:github.com/pasky/chrome-cdp-skill@v1.0.1",
     "git:github.com/kaofelix/pi-fzf",
     "https://github.com/davebcn87/pi-autoresearch",
-    "npm:pi-parallel-web-search"
+    "npm:pi-parallel-web-search",
+    "npm:pi-extmgr"
   ],
-  "extensions": [
-    "+extensions/ghostty.ts"
-  ],
+  "extensions": ["+extensions/ghostty.ts"],
   "lastChangelogVersion": "0.58.3",
   "theme": "catppuccin-mocha",
   "defaultProvider": "github-copilot",
