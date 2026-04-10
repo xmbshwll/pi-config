@@ -24,10 +24,11 @@
     "git:github.com/kaofelix/pi-fzf",
     "https://github.com/davebcn87/pi-autoresearch",
     "npm:pi-parallel-web-search",
-    "npm:pi-extmgr"
+    "npm:pi-extmgr",
+    "git:github.com/MasuRii/pi-rtk-optimizer"
   ],
   "extensions": ["+extensions/ghostty.ts"],
-  "lastChangelogVersion": "0.58.3",
+  "lastChangelogVersion": "0.66.1",
   "theme": "catppuccin-mocha",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.4",
