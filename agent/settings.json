@@ -11,7 +11,6 @@
     "npm:pi-subdir-context",
     "npm:pi-context",
     "https://github.com/nicobailon/visual-explainer",
-    "npm:pi-nvidia-nim",
     "npm:pi-design-deck",
     "git:github.com/pasky/chrome-cdp-skill",
     "git:github.com/kaofelix/pi-fzf",
