@@ -2,17 +2,10 @@
   "packages": [
     "npm:pi-powerline-footer",
     "git:github.com/nicobailon/pi-mcp-adapter",
-    {
-      "source": "git:github.com/HazAT/pi-smart-sessions",
-      "extensions": ["-extensions/smart-sessions.ts"]
-    },
-    {
-      "source": "git:github.com/HazAT/pi-parallel",
-      "extensions": ["-extension/index.ts"]
-    },
+    "git:github.com/HazAT/pi-smart-sessions",
+    "git:github.com/HazAT/pi-parallel",
     "git:github.com/HazAT/glimpse",
-    "git:github.com/nicobailon/pi-subagents",
-    "npm:pi-notify",
+    "git:github.com/HazAT/pi-interactive-subagents",
     "npm:pi-markdown-preview",
     "npm:pi-interview",
     "npm:pi-subdir-context",
@@ -20,18 +13,25 @@
     "https://github.com/nicobailon/visual-explainer",
     "npm:pi-nvidia-nim",
     "npm:pi-design-deck",
-    "git:github.com/pasky/chrome-cdp-skill@v1.0.1",
+    "git:github.com/pasky/chrome-cdp-skill",
     "git:github.com/kaofelix/pi-fzf",
     "https://github.com/davebcn87/pi-autoresearch",
     "npm:pi-parallel-web-search",
     "npm:pi-extmgr",
-    "git:github.com/MasuRii/pi-rtk-optimizer"
+    "git:github.com/MasuRii/pi-rtk-optimizer",
+    "git:github.com/jonjonrankin/pi-caveman",
+    "git:github.com/earendil-works/pi-review",
+    "git:github.com/VandeeFeng/pi-memory-md",
+    "npm:pi-simplify",
+    "npm:pi-interactive-shell",
+    "npm:pi-intercom",
+    "git:https://github.com/badlogic/pi-diff-review"
   ],
   "extensions": ["+extensions/ghostty.ts"],
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.69.0",
   "theme": "catppuccin-mocha",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.4",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "xhigh",
   "hideThinkingBlock": false
 }
