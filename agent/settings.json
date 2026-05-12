@@ -23,13 +23,15 @@
     "npm:pi-interactive-shell",
     "npm:pi-intercom",
     "git:https://github.com/badlogic/pi-diff-review",
-    "npm:pi-subagents"
+    "npm:pi-subagents",
+    "https://github.com/mitsuhiko/pi-ds4",
+    "npm:pi-commandcode-provider"
   ],
   "extensions": ["+extensions/ghostty.ts"],
-  "lastChangelogVersion": "0.70.6",
+  "lastChangelogVersion": "0.74.0",
   "theme": "catppuccin-mocha",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.4",
-  "defaultThinkingLevel": "xhigh",
+  "defaultProvider": "commandcode",
+  "defaultModel": "deepseek/deepseek-v4-pro",
+  "defaultThinkingLevel": "high",
   "hideThinkingBlock": false
 }
