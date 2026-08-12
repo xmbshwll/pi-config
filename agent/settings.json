@@ -3,7 +3,6 @@
     "npm:pi-powerline-footer",
     "git:github.com/nicobailon/pi-mcp-adapter",
     "git:github.com/HazAT/pi-smart-sessions",
-    "git:github.com/HazAT/pi-parallel",
     "git:github.com/HazAT/glimpse",
     "npm:pi-markdown-preview",
     "npm:pi-interview",
@@ -25,10 +24,13 @@
     "npm:pi-subagents",
     "https://github.com/mitsuhiko/pi-ds4",
     "npm:pi-commandcode-provider",
-    "git:github.com/ProbabilityEngineer/pi-diet-semble"
+    "git:github.com/ProbabilityEngineer/pi-diet-semble",
+    "git:github.com/DietrichGebert/ponytail",
+    "npm:pi-web-access",
+    "npm:pi-btw"
   ],
   "extensions": ["+extensions/ghostty.ts"],
-  "lastChangelogVersion": "0.78.1",
+  "lastChangelogVersion": "0.84.1",
   "theme": "catppuccin-mocha",
   "defaultProvider": "commandcode",
   "defaultModel": "deepseek/deepseek-v4-pro",
