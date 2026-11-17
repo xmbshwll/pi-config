@@ -155,93 +155,65 @@ Avoid shotgun debugging ("let me try this... nope, what about this..."). If you'
 
 **Prefer subagent delegation** for any task that involves multiple steps or could benefit from specialized focus.
 
-#### Available Agents
+#### Available Agents (embedded in pi-subagents)
 
-| Agent | Purpose | Model |
-|-------|---------|-------|
-| `spec` | Interactive spec agent — clarifies WHAT to build (intent, requirements, effort level, ISC). Produces a spec artifact. | Opus 4.6 (medium thinking) |
-| `planner` | Interactive planning agent — takes a spec and figures out HOW to build it. Explores approaches, validates design, writes plans, creates todos. | Opus 4.6 (medium thinking) |
-| `scout` | Fast codebase reconnaissance | Haiku (fast, cheap) |
-| `worker` | Implements tasks from todos, makes polished commits (always using the `commit` skill), and closes the todo. Reports back if a todo is missing examples/references. | Sonnet 4.6 |
-| `reviewer` | Reviews code for quality/security | Codex 5.3 |
-| `researcher` | Deep research using parallel tools (web search, URL extraction, synthesis) and Claude Code for hands-on code investigation | Sonnet 4.6 |
+This project delegates through the `pi-subagents` extension. It ships these builtin agents:
+
+| Agent | Use it when you want... |
+|-------|--------------------------|
+| `scout` | Fast local codebase recon: relevant files, entry points, data flow, risks. |
+| `researcher` | Web/docs research with sources and a concise research brief. |
+| `evidence-auditor` | Independent check of whether research claims rest on their sources. |
+| `worker` | Implementation work. It edits files, validates, and escalates unapproved decisions instead of guessing. |
+| `reviewer` | Read-only code review of task/plan, tests, edge cases, and simplicity. |
+| `oracle` | A second opinion that challenges assumptions without editing. |
+| `delegate` | A lightweight general delegate that behaves close to the parent session. |
+
+Rule of thumb: `scout` before you understand the code. Use `researcher` before you trust external facts. Use `evidence-auditor` before you rely on important research. Use `worker` to implement. Use `reviewer` to check. Use `oracle` when the decision feels risky.
+
+For implementation work, the loop is `clarify → scout → worker → fresh reviewers → worker`. Packaged prompts such as `/parallel-review` and `/review-loop` make these patterns repeatable.
 
 #### Orchestration Mindset
 
-Subagents are **specialists in a system**. Each agent exists for a specific purpose — scouting, implementing, reviewing, researching, planning. When you spawn a subagent, it should:
+Subagents are **specialists in a system**. Each agent serves one purpose: scouting, implementing, reviewing, researching, auditing evidence, or advising. When you spawn a subagent, it should:
 
 - **Focus on what's asked** — do the task, do it well, move on
-- **Not expand scope** — a spec agent doesn't plan architecture, a planner doesn't re-clarify requirements, a scout doesn't implement, a worker doesn't redesign, a reviewer doesn't rewrite
-- **Trust the system** — other agents handle what's outside your role
-- **Deliver and exit** — produce your artifact/commit/review, then terminate cleanly
+- **Not expand scope** — a scout does not implement, a worker does not redesign, a reviewer does not rewrite
+- **Trust the system** — other agents handle what lies outside your role
+- **Deliver and exit** — produce your artifact, commit, or review, then stop cleanly
 
-This isn't a rigid hierarchy — it's a team of specialists. Each agent leans hard into its strengths and trusts that the orchestrator (the main session or the user) will route the right work to the right agent.
+This is not a rigid hierarchy. It is a team of specialists. Each agent leans into its strengths and trusts the orchestrator to route the right work to the right agent.
 
 #### Subagents
 
-Subagents are **async** — the tool returns immediately and the agent can keep working. When a subagent finishes, its result is steered back to the main session as an interrupt. A live widget at the bottom of the screen shows all running subagents with elapsed time and progress.
-
-The `agent` parameter loads defaults from `~/.pi/agent/agents/<name>.md`. Model, tools, skills, thinking — all inherited. Explicit params override agent defaults.
+Subagents are **async**. The tool returns immediately and the agent keeps working. When a subagent finishes, its result returns to the main session as an interrupt. The TUI keeps active work visible in the FleetView. Use `/subagents-fleet` to browse children, read transcripts, steer, or stop a run.
 
 ```typescript
-// Use existing agent definitions — full transparency
 subagent({ name: "Scout", agent: "scout", task: "Analyze the codebase..." })
 subagent({ name: "Worker", agent: "worker", task: "Implement TODO-xxxx..." })
 subagent({ name: "Reviewer", agent: "reviewer", task: "Review recent changes..." })
 subagent({ name: "Researcher", agent: "researcher", task: "Research [topic]..." })
-
-// Spec — clarifies WHAT to build (interactive, user collaborates)
-subagent({ name: "📝 Spec", agent: "spec", interactive: true, task: "Define spec: [description]. Context: [relevant info]" })
-
-// Planner — figures out HOW to build it (interactive, receives spec as input)
-subagent({ name: "💬 Planner", agent: "planner", interactive: true, task: "Plan implementation for spec: [spec artifact path]. Context: [relevant info]" })
-
-// Iterate — fork the session for focused work, full context preserved
-subagent({ name: "Iterate", fork: true, task: "Fix the bug where..." })
-
-// Override agent defaults when needed
-subagent({ name: "Worker", agent: "worker", model: "anthropic/claude-haiku-4-5", task: "Quick fix..." })
-
-// Parallel execution — just call subagent multiple times, they all run concurrently
-subagent({ name: "Scout: Auth", agent: "scout", task: "Analyze auth module" })
-subagent({ name: "Scout: DB", agent: "scout", task: "Map database schema" })
+subagent({ name: "Oracle", agent: "oracle", fork: true, task: "Challenge my plan." })
 ```
 
-**Parallel execution:** Since subagents are async, just call `subagent` multiple times — they all run concurrently in their own cmux terminals. Results steer back independently as each finishes.
+**Parallel execution:** Since subagents are async, call `subagent` multiple times. They run concurrently. Results return independently as each finishes. Use parallel reviewers for correctness, tests, and simplicity.
 
-Subagents are full pi sessions — all extensions and skills auto-discover. A subagent can spawn another subagent (e.g., planner spawns a scout). Agent `.md` files in `~/.pi/agent/agents/` define model, tools, skills, thinking level.
+**Background execution:** Runs keep working after control returns to you. The FleetView shows active work.
 
-**`auto-exit: true` frontmatter field** — Set in agent definition `.md` files to make the agent auto-shutdown when its turn ends, without needing to call `subagent_done`. Use for autonomous agents (scout, worker, reviewer). Don't use for interactive agents (spec, planner). Safety: if the user sends any input during the session, auto-exit is permanently disabled for that session.
-
-**Slash commands:**
-- `/plan <what to build>` — start the full planning workflow (assess → scout → spec → planner → execute → review)
-- `/subagent <agent> <task>` — spawn a subagent by name (e.g., `/subagent scout analyze auth module`)
-- `/iterate [task]` — fork session for quick fixes
-
-**Iterate pattern** — for quick fixes and ad-hoc work after a big implementation. The user branches off into a focused subagent, fixes a bug or makes a change, then comes back with just the summary. Keeps the main session's context clean.
-
-```typescript
-subagent({
-  name: "Iterate",
-  fork: true,
-  task: "[describe the bug or change needed]"
-})
-```
-
-`fork: true` copies the current session — the sub-agent has full conversation context. All extensions and skills auto-discover (no `extensions` param = everything). Use when the user says "let me fix this real quick", "iterate on this", or when they want focused work without polluting the main session's context.
+**Worker coordination:** `worker` is the single writer thread. Run one editing agent on a worktree at a time. `worker` escalates unapproved decisions through `contact_supervisor`. It does not guess.
 
 #### When to Delegate
 
-- **New feature or unclear requirements** → Start with `spec` to clarify WHAT, then `planner` for HOW
-- **Todos ready to execute** → Spawn `scout` then `worker` agents. **If the project defines a specialized agent** (e.g. `fullstack` for a web project), prefer it over generic `worker` — it has project-specific context, docs references, and often a stronger model.
-- **Worker reports missing context** → Provide the missing examples/references, update the todo, re-spawn the worker
-- **Code review needed** → Delegate to `reviewer`
-- **Need context first** → Start with `scout`
-- **Web research or external info needed** → Delegate to `researcher` (uses parallel tools for web search/synthesis, Claude Code for hands-on code exploration)
+- **Need context first** → Start with `scout` before planning
+- **External facts to trust** → Use `researcher`, then run `evidence-auditor` on the decision-critical claims
+- **Approved plan to implement** → Use `worker`, then run `reviewer` and apply the feedback
+- **A decision feels risky** → Ask `oracle` for a second opinion
+- **Code review needed** → Delegate to `reviewer`. Run parallel reviewers for correctness, tests, and simplicity
+- **No specialist fits** → Use `delegate`
 
 #### When NOT to Delegate
 
-- Quick fixes (< 2 minutes of work)
+- Quick fixes (under 2 minutes of work)
 - Simple questions
 - Single-file changes with obvious scope
 - When the user wants to stay hands-on
